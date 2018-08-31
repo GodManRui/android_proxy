@@ -1,0 +1,2 @@
+include ':app',':app2',':app3',':appproxy'
+include 'MPChartLib'
