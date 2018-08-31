@@ -3,12 +3,12 @@ package com.tencent.samples.cronet_sample.data;
 public class Timing {
 
     /**
-     * navigationStart : 1535624596116
+     * navigationStart : 1535624596116      准备加载新页面
      * unloadEventStart : 0
      * unloadEventEnd : 0
      * redirectStart : 0
      * redirectEnd : 0
-     * fetchStart : 1535624596124
+     * fetchStart : 1535624596124           8ms
      * domainLookupStart : 1535624596124
      * domainLookupEnd : 1535624596124
      * connectStart : 1535624596124
@@ -16,27 +16,27 @@ public class Timing {
      * secureConnectionStart : 0
      * requestStart : 1535624596124
      * responseStart : 1535624596124
-     * responseEnd : 1535624596389
-     * domLoading : 1535624596392
-     * domInteractive : 1535624598214
-     * domContentLoadedEventStart : 1535624598215
-     * domContentLoadedEventEnd : 1535624598260
-     * domComplete : 1535624598631
+     * responseEnd : 1535624596389       265ms
+     * domLoading : 1535624596392         3m                    Dom树开始解析
+     * domInteractive : 1535624598214       1822ms              DOM结构结束解析、开始加载内嵌资源时
+     * domContentLoadedEventStart : 1535624598215   1ms         DOM结构解析完毕、所有脚本开始运行 JS CSS 开始加载
+     * domContentLoadedEventEnd : 1535624598260     45ms        js脚本 CSS解析完毕
+     * domComplete : 1535624598631                  371ms       Dom树完成解析
      * loadEventStart : 1535624598631
-     * loadEventEnd : 1535624598632
+     * loadEventEnd : 1535624598632                 1ms
      */
 
     private long navigationStart;
-    private int unloadEventStart;
-    private int unloadEventEnd;
-    private int redirectStart;
-    private int redirectEnd;
+    private long unloadEventStart;
+    private long unloadEventEnd;
+    private long redirectStart;
+    private long redirectEnd;
     private long fetchStart;
     private long domainLookupStart;
     private long domainLookupEnd;
     private long connectStart;
     private long connectEnd;
-    private int secureConnectionStart;
+    private long secureConnectionStart;
     private long requestStart;
     private long responseStart;
     private long responseEnd;
@@ -56,7 +56,7 @@ public class Timing {
         this.navigationStart = navigationStart;
     }
 
-    public int getUnloadEventStart() {
+    public long getUnloadEventStart() {
         return unloadEventStart;
     }
 
@@ -64,7 +64,7 @@ public class Timing {
         this.unloadEventStart = unloadEventStart;
     }
 
-    public int getUnloadEventEnd() {
+    public long getUnloadEventEnd() {
         return unloadEventEnd;
     }
 
@@ -72,7 +72,7 @@ public class Timing {
         this.unloadEventEnd = unloadEventEnd;
     }
 
-    public int getRedirectStart() {
+    public long getRedirectStart() {
         return redirectStart;
     }
 
@@ -80,7 +80,7 @@ public class Timing {
         this.redirectStart = redirectStart;
     }
 
-    public int getRedirectEnd() {
+    public long getRedirectEnd() {
         return redirectEnd;
     }
 
@@ -128,7 +128,7 @@ public class Timing {
         this.connectEnd = connectEnd;
     }
 
-    public int getSecureConnectionStart() {
+    public long getSecureConnectionStart() {
         return secureConnectionStart;
     }
 

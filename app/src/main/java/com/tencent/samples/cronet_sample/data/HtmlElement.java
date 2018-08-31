@@ -8,7 +8,7 @@ public class HtmlElement {
     private String url;
     private long netStartTime;
     private long netEndTime;
-    private List<Timing> doms = new ArrayList<>();
+    private List<ChildTiming> doms = new ArrayList<>();
 
     public HtmlElement(String url) {
         this.url = url;
@@ -47,18 +47,18 @@ public class HtmlElement {
     }
 
 
-    public List<Timing> getDoms() {
+    public List<ChildTiming> getDoms() {
         if (doms == null) {
             return new ArrayList<>();
         }
         return doms;
     }
 
-    public void setDoms(List<Timing> doms) {
+    public void setDoms(List<ChildTiming> doms) {
         this.doms = doms;
     }
 
-    public static class Timing {
+    public static class ChildTiming {
         private String url;
         private long netStartTime;  //纳秒级别
         private long netEndTime;
@@ -73,7 +73,7 @@ public class HtmlElement {
         private String waiting;     //发送请求完毕到接收请求开始的时间。
         private long contentDownload; //接收数据时间    Receiving
 
-        public Timing(String url) {
+        public ChildTiming(String url) {
             this.url = url;
         }
 
