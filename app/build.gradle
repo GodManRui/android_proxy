@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'nc'
 android {
     compileSdkVersion 24
     buildToolsVersion '27.0.3'
 
     defaultConfig {
+//        ndk { abiFilters "armeabi", "armeabi-v7a", "arm64-v8a" }
         applicationId "com.tencent.clb.quic_demo"
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
@@ -30,28 +31,30 @@ ext {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
     //${supportLibVersion}
     implementation 'com.android.support:appcompat-v7:24.2.1'
-    implementation files('libs/cronet_impl_common_java.jar')
-    implementation files('libs/cronet_impl_native_java.jar')
-    implementation files('libs/cronet_api.jar')
+    /*    implementation files('libs/cronet_impl_common_java.jar')
+        implementation files('libs/cronet_impl_native_java.jar')
+        implementation files('libs/cronet_api.jar')*/
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.android.support:recyclerview-v7:24.2.1'
     implementation 'com.android.support:percent:24.2.1'
     implementation 'com.android.support:customtabs:24.2.1'
     implementation 'com.google.android.exoplayer:exoplayer:r1.5.7'
-    androidTestCompile("com.android.support.test:runner:${androidTestVersion}") {
+    androidTestImplementation("com.android.support.test:runner:${androidTestVersion}") {
         exclude group: "com.android.support"
     }
-    androidTestCompile("com.android.support.test.espresso:espresso-core:${espressoVersion}") {
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:${espressoVersion}") {
         exclude module: "espresso-idling-resource"
         exclude group: "com.android.support"
     }
-    implementation files('libs/cronet_api.jar')
-    implementation files('libs/cronet_impl_common_java.jar')
-    implementation files('libs/cronet_impl_native_java.jar')
-    implementation files('libs/tbs_sdk_thirdapp_v3.6.0.1325_43613_sharewithdownload_withoutGame_obfs_20180807_151115.jar')
+    /*  implementation files('libs/cronet_api.jar')
+        implementation files('libs/cronet_impl_common_java.jar')
+        implementation files('libs/cronet_impl_native_java.jar')
+        implementation files('libs/tbs_sdk_thirdapp_v3.6.0.1325_43613_sharewithdownload_withoutGame_obfs_20180807_151115.jar')*/
     implementation 'com.google.code.gson:gson:2.8.5'
+//    implementation "org.chromium.net:cronet-embedded:66.3359.158"
+
 }

@@ -16,7 +16,7 @@
   -->
 
 <resources>
-    <string name="app_name">quic-demo</string>
+    <string name="app_name">Quic</string>
     <string name="storage_permission_denied">Permission to access storage was denied</string>
     <string name="load_images">加载</string>
     <string name="stream">stream</string>

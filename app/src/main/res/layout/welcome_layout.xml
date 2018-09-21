@@ -36,12 +36,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <com.tencent.smtt.sdk.WebView
-        android:id="@+id/wb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone" />
-
     <LinearLayout
         android:id="@+id/proto_fragment"
         android:layout_width="match_parent"

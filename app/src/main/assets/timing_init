@@ -1,0 +1,14 @@
+function TestTiming(timing){
+		var timerArr = [];
+		var dnsTimer = {key:"DNS查询耗时" , value:timing.domainLookupEnd - timing.domainLookupStart + "ms"};
+		var tcpTimer = {key:"TCP链接耗时" , value:timing.connectEnd - timing.connectStart + "ms"};
+		var requestTimer = {key:"request请求耗时" , value:timing.responseEnd - timing.responseStart + "ms"};
+		var domTimer = {key:"解析dom树耗时" , value:timing.domComplete - timing.domInteractive + "ms"};
+		var pageEmptyTimer = {key:"白屏时间" , value:timing.responseStart - timing.navigationStart + "ms"};
+		var domReadyTimer = {key:"domready时间" , value:timing.domContentLoadedEventEnd - timing.navigationStart + "ms"};
+		var onloadTimer = {key:"onload时间" , value:timing.loadEventEnd - timing.navigationStart + "ms"};
+
+		timerArr = timerArr.concat(dnsTimer, tcpTimer, requestTimer, domTimer, pageEmptyTimer, domReadyTimer, onloadTimer);
+		return timerArr;
+	}
+TestTiming(performance.timing);

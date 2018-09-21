@@ -16,54 +16,23 @@
 package com.tencent.samples.cronet_sample;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.tencent.samples.cronet_sample.data.HtmlElement;
-import com.tencent.samples.cronet_sample.data.HtmlElement.ChildTiming;
-import com.tencent.samples.cronet_sample.data.Timing;
-import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
-import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
-import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
-import com.tencent.smtt.sdk.WebViewClient;
-
-import org.chromium.net.CronetEngine;
-import org.chromium.net.CronetException;
-import org.chromium.net.UrlRequest;
-import org.chromium.net.UrlResponseInfo;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    private static CronetEngine cronetEngine;
+
     private LinearLayout ll;
-    private WebView wb;
-    private HtmlElement elements;
 
     @RequiresApi(api = VERSION_CODES.KITKAT)
     protected void onCreate(Bundle icicle) {
@@ -77,104 +46,6 @@ public class WelcomeActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.cronet_load_images))
                 .setText(R.string.cronet_load_images_text);
         ll = (LinearLayout) findViewById(R.id.proto_fragment);
-        wb = (WebView) findViewById(R.id.wb);
-        getCronetEngine(this);
-        WebSettings settings = wb.getSettings();
-        settings.setJavaScriptEnabled(true);
-//        settings.setCacheMode(WebSettings.CA);
-        wb.setWebViewClient(new WebViewClient() {
-         /*   @Override
-            // 在点击请求的是链接是才会调用，重写此方法返回true表明点击网页里面的链接还是在当前的webview里跳转，不跳到浏览器那边。这个函数我们可以做很多操作，比如我们读取到某些特殊的URL，于是就可以不打开地址，取消这个操作，进行预先定义的其他操作，这对一个程序是非常必要的。
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.contains("/mproduct-")) {
-                    Intent i = new Intent(WelcomeActivity.this, MainActivity.class);
-                    startActivity(i);
-                    return true;
-                } else {
-                    return false;
-                }
-            }*/
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-//                wb.loadUrl("javascript: function getTiming(){return performance.timing;}");
-                Log.e("JerryZhu", "onPage 开始加载 ");
-                elements.setNetStartTime(System.currentTimeMillis());
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-//                wb.evaluateJavascript("javascript:  function getTiming(){return JSON.stringify(performance.timing);}; getTiming();", value -> {
-                wb.evaluateJavascript("javascript:  JSON.stringify(performance.timing);", value -> {
-                    String strTiming = value.replaceAll("\\\\", "");
-                    strTiming = strTiming.substring(1, strTiming.length() - 1);
-                    Timing timing = new Gson().fromJson(strTiming, Timing.class);
-                    Log.e("JerryZhu", "onPage 返回值: " + strTiming);
-                    long xuanran = timing.getLoadEventEnd() - timing.getResponseEnd();
-                    Log.e("JerryZhu", "onPage 渲染时间 : " + xuanran + "ms     网络数据获取: " + (timing.getResponseEnd() - timing.getFetchStart()));
-                });
-                super.onPageFinished(view, url);
-                elements.setNetEndTime(System.currentTimeMillis());
-//                String s = new Gson().toJson(elements);
-                Log.e("JerryZhu", "onPage 执行结果 : ");
-            }
-
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                if (request.getUrl().toString().endsWith("favicon.ico")) return null;
-                Executor executor = Executors.newSingleThreadExecutor();
-                HtmlElement.ChildTiming timing = new ChildTiming(request.getUrl().toString());
-                Thread thread = Thread.currentThread();
-                SimpleUrlRequestCallback callback = new SimpleUrlRequestCallback(elements, timing, thread);
-                callback.flag = true;
-                UrlRequest.Builder builder = cronetEngine.newUrlRequestBuilder(request.getUrl().toString()
-                        , callback, executor);
-                UrlRequest build = builder.build();
-                timing.setNetStartTime(System.nanoTime());              //子元素开始
-                build.start();
-
-                Log.e("JerryZhu1", "webView 拦截请求: " + thread.getName() + "   " + thread.getId()
-                        + "  请求地址: " + request.getUrl());
-                synchronized (thread) {
-                    try {
-                        thread.wait();
-                        Log.e("JerryZhu", "shouldInterceptRequest: 醒了" + request.getUrl());
-                    } catch (InterruptedException e) {
-                        Log.e("shouldInterceptRequest", "==  " + request.getUrl());
-                        e.printStackTrace();
-                    }
-                }
-              /*  while (callback.flag) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        Log.e("JerryZhu", " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" + request.getUrl());
-                        e.printStackTrace();
-                    }
-                    Log.e("JerryZhu", "s等待中: " + callback.mTiming.getUrl());
-                }*/
-                timing.setNetEndTime(System.nanoTime());              //子元素结束
-                elements.getDoms().add(timing);
-
-                String contentType = callback.contentType;
-                String contentEncoding = callback.contentEncoding;
-
-               /*  if (request.getUrl().toString().endsWith("ico")) {
-                    webResourceResponse = new WebResourceResponse("text/html", "utf-8", new ByteArrayInputStream("ico icon".getBytes()));
-                } else {
-                    webResourceResponse = new WebResourceResponse(callback.contentType, "utf-8", new ByteArrayInputStream(callback.bytesReceived.toByteArray()));
-                }*/
-                Log.e("JerryZhu1", "cronet 有响应 : " + thread.getId() + "  请求地址: " + request.getUrl());
-                return new WebResourceResponse
-                        (TextUtils.isEmpty(contentType) ? "text/html" : contentType, contentEncoding, new ByteArrayInputStream(callback.bytesReceived.toByteArray()));
-            }
-
-            @Override
-            public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-                return super.shouldOverrideKeyEvent(view, event);
-            }
-        });
     }
 
     private void setUpToolbar() {
@@ -182,21 +53,6 @@ public class WelcomeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         ((TextView) toolbar.findViewById(R.id.welcome_title)).setText(R.string.welcome_activity);
-    }
-
-    private static synchronized CronetEngine getCronetEngine(Context context) {
-        if (cronetEngine == null) {
-            CronetEngine.Builder myBuilder = new CronetEngine.Builder(context);
-            cronetEngine = myBuilder
-                    .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISABLED, 100 * 1024)
-                    .addQuicHint("www.wolfcstech.com", 443, 443)
-//                    .addQuicHint("translate.google.cn", 443, 443)
-                    .enableHttp2(true)
-                    .enableQuic(true)
-                    .build();
-            //    .setUserAgent("clb_quic_demo")
-        }
-        return cronetEngine;
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -207,107 +63,9 @@ public class WelcomeActivity extends AppCompatActivity {
         customTabsIntent.launchUrl(this, Uri.parse(url));*/
       /*  Intent mpdIntent = new Intent(this, MainActivity.class);
         startActivity(mpdIntent);*/
+        startActivity(new Intent(this, QuicWebViewActivity.class));
 
-        ll.setVisibility(View.GONE);
-        wb.setVisibility(View.VISIBLE);
-        //    String wevUrl = "https://translate.google.cn/";
-        //      String wevUrl = "https://www.wolfcstech.com/";
-        String wevUrl = "https://www.baidu.com/";
-        elements = new HtmlElement(wevUrl);
-//        wb.loadUrl("https://translate.google.cn/");
-        wb.loadUrl(wevUrl);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (wb != null) {
-            wb.goBack();
-        }
-    }
 
-    class SimpleUrlRequestCallback extends UrlRequest.Callback {
-        private final Thread thread;
-        public boolean flag = true;
-        public ByteArrayOutputStream bytesReceived = new ByteArrayOutputStream();
-        public String contentType = "";
-        public String contentEncoding = "";
-        ChildTiming mTiming;
-        HtmlElement elements;
-        private WritableByteChannel receiveChannel = Channels.newChannel(bytesReceived);
-
-        SimpleUrlRequestCallback(HtmlElement elements, ChildTiming mTiming, Thread thread) {
-            this.elements = elements;
-            this.mTiming = mTiming;
-            this.thread = thread;
-        }
-
-        @Override
-        public void onRedirectReceived(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo, String s) throws Exception {
-            elements.redirectCount++;
-            Log.i("JerryZhu", "Redirect： " + urlResponseInfo.getHttpStatusCode() + "  " + urlResponseInfo.getUrl() + "   重定向地址:  = " + s);
-            urlRequest.followRedirect();
-        }
-
-        //        在所有的重定向都处理完了，且http响应的header都接收完，需要读取response的body时这个方法会被调用。一个请求的整个处理过程中，这个方法只会被调用一次。在这个方法中需要分配ByteBuffer，以用于http response body的读取过程。Response的body内容会首先被读取到这里分配的ByteBuffer中
-        @Override
-        public void onResponseStarted(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo) {
-            urlRequest.read(ByteBuffer.allocateDirect(32 * 1024));
-            mTiming.setStartWaitingResponse(System.nanoTime());
-            Map<String, List<String>> allHeaders = urlResponseInfo.getAllHeaders();
-            List<String> type = allHeaders.get("content-type");
-//            List<String> encoding = allHeaders.get("content-encoding");
-            for (int i = 0; i < type.size(); i++) {
-                contentType += type.get(i);
-                String[] split = contentType.split(";");
-                if (split.length >= 2) {
-                    contentType = split[0];
-                }
-                break;
-            }
-        /*    for (int i = 0; i < encoding.size(); i++) {
-                contentEncoding += encoding.get(i);
-            }*/
-//            Log.i("JerryZhu", "都处理完了，且http响应的header都接收完，需要读取response的body时 " + "\n 响应头: " + urlResponseInfo.getUrl() + urlResponseInfo.getAllHeaders());
-        }
-
-        //        http response body读取完成，或者ByteBuffer读满的时候，这个回调方法会被调用。在这个回调方法中，需要将ByteBuffer中的数据copy出来，清空ByteBuffer，然后重新启动读取。这里的回调方法实现，是将ByteBuffer的内容copy出来，借助于WritableByteChannel放进ByteArrayOutputStream中
-        @Override
-        public void onReadCompleted(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo, ByteBuffer byteBuffer) throws Exception {
-            byteBuffer.flip();  //将ByteBuffer中的数据copy出来，清空ByteBuffer，然后重新启动读取
-            try {
-                receiveChannel.write(byteBuffer);
-            } catch (IOException e) {
-                android.util.Log.i("JerryZhu", " IO异常 QUIC  IOException during ByteBuffer read. Details: ", e);
-            }
-//            Log.i("JerryZhu", "此次 byteBuffer size=: " + byteBuffer.array().length + "  目前总长度: " + bytesReceived.toByteArray().length);
-            byteBuffer.clear();
-            urlRequest.read(byteBuffer);
-        }
-
-        @Override
-        public void onSucceeded(UrlRequest urlRequest, UrlResponseInfo info) {
-            mTiming.setContentDownload(System.nanoTime());
-            String negotiatedProtocol = info.getNegotiatedProtocol();
-            android.util.Log.i("JerryZhu", negotiatedProtocol +
-                    "  请求完成  状态码 " + info.getHttpStatusCode() + "    URL:" + info.getUrl()
-                    + ", 总接收字节数为  " + info.getReceivedByteCount() + "   KB为: " + info.getReceivedByteCount() / 1024);
-
-            byte[] byteArray = bytesReceived.toByteArray();
-            flag = false;
-            synchronized (thread) {
-                thread.notify();
-            }
-//            Log.i("JerryZhu", "onSucceeded: " + Thread.currentThread().getName() + " 总接收字节数为  " + byteArray.length + "   KB为: " + byteArray.length / 1024);
-        }
-
-        @Override
-        public void onFailed(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo, CronetException e) {
-            boolean isNull = urlResponseInfo == null;
-            Log.e("JerryZhu", "请求失败！: " + (isNull ? " 返回体为空" : urlResponseInfo.getUrl()) + "  类型: " + contentType + contentEncoding + "  " + e);
-            flag = false;
-            synchronized (thread) {
-                thread.notify();
-            }
-        }
-    }
 }
