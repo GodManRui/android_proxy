@@ -13,7 +13,6 @@ import org.chromium.net.UrlResponseInfo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URLStreamHandlerFactory;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
@@ -27,8 +26,8 @@ public class NetWork {
         String value = Environment.getExternalStorageDirectory().getAbsolutePath() + "/1QUIC";
         CronetEngine cronetEngine = myBuilder
 //                    .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISABLED, 100 * 1024)
-              /*  .setStoragePath(value)
-                .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK, 100 * 1024)*/
+                /*  .setStoragePath(value)
+                  .enableHttpCache(CronetEngine.Builder.HTTP_CACHE_DISK, 100 * 1024)*/
                 .addQuicHint("www.wolfcstech.com", 443, 443)
                 .addQuicHint("wy.tytools.cn", 443, 443)
                 .addQuicHint("translate.google.cn", 443, 443)
