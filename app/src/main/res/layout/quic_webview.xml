@@ -4,6 +4,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp">
+
+        <EditText
+            android:id="@+id/ed_url"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null" />
+
+        <ImageView
+            android:id="@+id/im_search"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/ic_search_black_24dp" />
+    </RelativeLayout>
+
     <WebView
         android:id="@+id/web_x5_quic"
         android:layout_width="match_parent"

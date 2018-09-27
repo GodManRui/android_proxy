@@ -14,6 +14,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 
 import com.tencent.samples.cronet_sample.NetWork.SimpleUrlRequestCallback;
 import com.tencent.samples.cronet_sample.data.HtmlElement;
@@ -119,31 +120,48 @@ public class QuicWebViewActivity extends AppCompatActivity {
         }
     };
     private String wevUrl;
+    private EditText edUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quic_webview);
-//        wb = (WebView) findViewById(R.id.web_x5_quic);
-        wb = new WebView(this);
-        WebView.setWebContentsDebuggingEnabled(true);
-     /*   wb.setPictureListener((webView, picture) -> {
-            Picture picture1 = webView.capturePicture();
-            Log.e("JerryZhu", "高度: " + picture1.getHeight() + "  宽度 " + picture1.getWidth());
-        });*/
+
+        initView();
+        initCronet();
+        initWebView();
+
+//        Log.e("JerryZhu", "onCreate: " + wb.getX5WebViewExtension());
+    }
+
+    private void initView() {
+        wb = (WebView) findViewById(R.id.web_x5_quic);
+        edUrl = (EditText) findViewById(R.id.ed_url);
+        findViewById(R.id.im_search).setOnClickListener(v -> {
+            startBrowse();
+        });
+        //     wb = new WebView(this);
+    }
+
+    private void initCronet() {
         cronetEngine = getCronetEngine(getApplicationContext());
+        startNetLog();
+    }
+
+    private void initWebView() {
         WebSettings settings = wb.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         settings.setAppCacheEnabled(false);
         wb.setWebViewClient(wbClient);
-//        Log.e("JerryZhu", "onCreate: " + wb.getX5WebViewExtension());
-        initWeb();
     }
 
-    private void initWeb() {
-        String value = Environment.getExternalStorageDirectory().getAbsolutePath() + "/1QUICLOG";
-        cronetEngine.startNetLogToFile(value, true);
+    private void startBrowse() {
+        edUrl.setFocusable(false);
+        String edUrl = this.edUrl.getText().toString();
+        if (TextUtils.isEmpty(edUrl)) {
+
+        }
         // String wevUrl = "https://translate.google.cn/";
         //    String wevUrl = "https://www.wolfcstech.com/";
         //   String wevUrl = "https://www.baidu.com/";
@@ -155,6 +173,17 @@ public class QuicWebViewActivity extends AppCompatActivity {
         wb.loadUrl(wevUrl);
         //     String wevUrl = "http://debugtbs.qq.com";
         elements = new HtmlElement(wevUrl);
+    }
+
+    private void startNetLog() {
+        File outputFile;
+        try {
+            outputFile = File.createTempFile("cronet", ".txt",
+                    new File(Environment.getExternalStorageDirectory() + "/1QUIC_LOG"));
+            cronetEngine.startNetLogToFile(outputFile.toString(), false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

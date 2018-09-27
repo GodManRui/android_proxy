@@ -3,12 +3,10 @@ package com.tencent.samples.cronet_sample;
 import android.app.Application;
 import android.util.Log;
 
-import com.tencent.smtt.export.external.TbsCoreSettings;
+import com.nc.agent.android.NC;
 import com.tencent.smtt.sdk.QbSdk;
 import com.tencent.smtt.sdk.TbsListener;
 import com.tencent.smtt.sdk.WebView;
-
-import java.util.HashMap;
 
 public class MyApplication extends Application {
     @Override
@@ -19,8 +17,8 @@ public class MyApplication extends Application {
        /* HashMap<String, Object> map = new HashMap<>();
         map.put(TbsCoreSettings.TBS_SETTINGS_USE_PRIVATE_CLASSLOADER, true);
         QbSdk.initTbsSettings(map);*/
-       /*  initTbs();
-        NC.withApplicationToken("5b806461-2315-4640-b69a-025003973ba3").start(this);*/
+        /*  initTbs();*/
+        NC.withApplicationToken("5b806461-2315-4640-b69a-025003973ba3").start(this);
     }
 
     private void initTbs() {

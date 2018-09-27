@@ -15,14 +15,12 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/CronetSample">
-        <activity android:name=".WelcomeActivity">
+        <activity android:name=".QuicWebViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".QuicWebViewActivity" />
     </application>
 
 </manifest>
