@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2016 Google Inc.
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,4 +27,12 @@
     <string name="toolbar_title">图片加载中，下拉可以刷新</string>
     <string name="quic_images_loaded">Quic加载 图片共用了 %1$d 毫秒</string>
     <string name="https_images_loaded">Http2加载 图片共用了 %1$d 毫秒</string>
+
+    <string-array name="support_quic_url">
+        <item>https://translate.google.cn/</item>
+        <item>https://www.wolfcstech.com/</item>
+        <item>https://halfrost.com/tag/quic/</item>
+        <item>https://www.litespeedtech.com/</item>
+        <item>https://wy.tytools.cn/</item>
+    </string-array>
 </resources>

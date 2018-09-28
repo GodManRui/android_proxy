@@ -6,13 +6,18 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp">
+        android:layout_height="45dp"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="10dp">
 
         <EditText
             android:id="@+id/ed_url"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@null" />
+            android:layout_marginLeft="10dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:maxLines="1" />
 
         <ImageView
             android:id="@+id/im_search"
