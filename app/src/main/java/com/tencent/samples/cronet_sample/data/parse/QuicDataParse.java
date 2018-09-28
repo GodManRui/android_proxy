@@ -27,7 +27,7 @@ public class QuicDataParse {
 	static List<EventData> edList;
 	static List<NetRecord> netList = new ArrayList<NetRecord>();
 
-	public static void parseLog(String logpath) {
+	public static List<NetRecord> parseLog(String logpath) {
 		File file = new File(logpath);
 		try {
 			BufferedInputStream inputStream = new BufferedInputStream(
@@ -41,15 +41,16 @@ public class QuicDataParse {
 			System.out.println(a.length());
 
 			inputStream.close();
-			parseJson(a);
+			return parseJson(a);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
-	private static void parseJson(String a) {
+	private static List<NetRecord> parseJson(String a) {
 		JSONObject json = JSONObject.parseObject(a);
 		JSONArray array = json.getJSONArray("events");
 		for (int i = 0; i < array.size(); i++) {
@@ -70,13 +71,13 @@ public class QuicDataParse {
 		for (Entry<Integer, List<EventData>> entry : dataMap.entrySet()) {
 			ParseEvent(entry.getKey(), entry.getValue());
 		}
-
-		System.out.println(startTime);
-		System.out.println(netList.size());
-		for (int i = 0; i <netList.size(); i++) {
-			System.out.println(netList.get(i).toString());
-			System.out.println(netList.get(i).getElement().toString());
-		}
+		return netList;
+//		System.out.println(startTime);
+//		System.out.println(netList.size());
+//		for (int i = 0; i <netList.size(); i++) {
+//			System.out.println(netList.get(i).toString());
+//			System.out.println(netList.get(i).getElement().toString());
+//		}
 	}
 
 	//统一
