@@ -3,9 +3,6 @@ package com.tencent.samples.cronet_sample;
 import android.content.Context;
 import android.os.Environment;
 
-import com.tencent.samples.cronet_sample.data.HtmlElement;
-import com.tencent.samples.cronet_sample.data.HtmlElement.ChildTiming;
-
 import org.chromium.net.CronetEngine;
 import org.chromium.net.CronetException;
 import org.chromium.net.UrlRequest;
@@ -45,19 +42,14 @@ public class NetWork {
         public ByteArrayOutputStream bytesReceived = new ByteArrayOutputStream();
         public String contentType = "";
         public String contentEncoding = "";
-        ChildTiming mTiming;
-        HtmlElement elements;
         private WritableByteChannel receiveChannel = Channels.newChannel(bytesReceived);
 
-        public SimpleUrlRequestCallback(HtmlElement elements, ChildTiming mTiming, Thread thread) {
-            this.elements = elements;
-            this.mTiming = mTiming;
+        public SimpleUrlRequestCallback(Thread thread) {
             this.thread = thread;
         }
 
         @Override
         public void onRedirectReceived(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo, String s) throws Exception {
-            elements.redirectCount++;
             urlRequest.followRedirect();
         }
 
@@ -65,7 +57,6 @@ public class NetWork {
         @Override
         public void onResponseStarted(UrlRequest urlRequest, UrlResponseInfo urlResponseInfo) {
             urlRequest.read(ByteBuffer.allocateDirect(32 * 1024));
-            mTiming.setStartWaitingResponse(System.nanoTime());
             Map<String, List<String>> allHeaders = urlResponseInfo.getAllHeaders();
             List<String> type = allHeaders.get("content-type");
 //            List<String> encoding = allHeaders.get("content-encoding");
@@ -93,7 +84,6 @@ public class NetWork {
 
         @Override
         public void onSucceeded(UrlRequest urlRequest, UrlResponseInfo info) {
-            mTiming.setContentDownload(System.nanoTime());
             String negotiatedProtocol = info.getNegotiatedProtocol();
             android.util.Log.i("JerryZhu", negotiatedProtocol +
                     "  请求完成  状态码 " + info.getHttpStatusCode() + "    URL:" + info.getUrl()
