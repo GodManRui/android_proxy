@@ -20,12 +20,14 @@
         android:theme="@style/CronetSample">
         <activity
             android:name=".QuicWebViewActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize">
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".LogParsingActivity" />
+        <!--<activity android:name=".WebViewActivity" />-->
     </application>
 
 </manifest>

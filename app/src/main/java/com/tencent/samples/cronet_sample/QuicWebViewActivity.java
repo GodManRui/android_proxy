@@ -1,6 +1,7 @@
 package com.tencent.samples.cronet_sample;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
@@ -53,6 +56,7 @@ public class QuicWebViewActivity extends AppCompatActivity {
                     break;
                 case LOAD_NEW_URL:
                     if (wb != null) {
+                        wb.loadUrl("about:blank");
                         wb.clearHistory();
                         wb.clearFormData();
                         wb.clearCache(true);
@@ -65,6 +69,7 @@ public class QuicWebViewActivity extends AppCompatActivity {
             }
         }
     };
+    private boolean mShouldLoad = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,7 +93,10 @@ public class QuicWebViewActivity extends AppCompatActivity {
             imm.showSoftInput(edUrl, 0);
         });
         findViewById(R.id.im_search).setOnClickListener(v -> {
-            startBrowse();
+            if (mShouldLoad)
+                startBrowse();
+            else
+                startLogParsingActivity();
         });
         //     wb = new WebView(this);
     }
@@ -116,7 +124,7 @@ public class QuicWebViewActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         wb.setWebViewClient(new MyWebClient(stringBuilder, handler));
-
+        wb.loadUrl("www.baidu.com");
     }
 
     private void startBrowse() {
@@ -144,6 +152,7 @@ public class QuicWebViewActivity extends AppCompatActivity {
         Message message = handler.obtainMessage();
         message.what = LOAD_NEW_URL;
         handler.sendMessage(message);
+        mShouldLoad = false;
         // String wevUrl = "https://translate.google.cn/";
         //    String wevUrl = "https://www.wolfcstech.com/";
         //   String wevUrl = "https://www.baidu.com/";
@@ -153,6 +162,11 @@ public class QuicWebViewActivity extends AppCompatActivity {
         //   wevUrl = "https://www.litespeedtech.com/";
         //   wevUrl = "http://debugx5.qq.com";
         //     String wevUrl = "http://debugtbs.qq.com";
+    }
+
+    private void startLogParsingActivity() {
+        Intent intent = new Intent(this, LogParsingActivity.class);
+        startActivity(intent);
     }
 
     private void startNetLog() {
@@ -186,6 +200,18 @@ public class QuicWebViewActivity extends AppCompatActivity {
         deleteDatabase("webviewCookiesChromium.db");
         deleteDatabase("webviewCache.db");
 //        wb.loadDataWithBaseURL(null, "", "text/html", "utf-8", null);
+
+        //清空所有Cookie
+        CookieSyncManager.createInstance(this);  //Create a singleton CookieSyncManager within a context
+        CookieManager cookieManager = CookieManager.getInstance(); // the singleton CookieManager instance
+        cookieManager.removeAllCookie();// Removes all cookies.
+        CookieSyncManager.getInstance().sync(); // forces sync manager to sync now
+
+        wb.setWebChromeClient(null);
+        wb.setWebViewClient(null);
+        wb.getSettings().setJavaScriptEnabled(false);
+        wb.clearCache(true);
+
         wb = null;
     }
 
