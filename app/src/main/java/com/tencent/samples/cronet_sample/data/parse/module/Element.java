@@ -1,8 +1,8 @@
 package com.tencent.samples.cronet_sample.data.parse.module;
 
 public class Element {
-	private int dns;
-	private int conn;
+	private int dns;//
+	private int conn;//建联时间
 	private int ssl;
 	private int request;
 	private int response;

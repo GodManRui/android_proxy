@@ -133,7 +133,10 @@ public class EventTypesParse {
                 break;
             case LogEventTypes.HTTP_TRANSACTION_READ_RESPONSE_HEADERS:
                 if (data.getParams() != null && data.getParams().getHeaders() != null) {
-                    netRecord.setResponseHeader(data.getParams().getHeaders());
+                    String response_header = data.getParams().getHeaders();
+                    netRecord.setResponseHeader(response_header);
+                    int s = response_header.indexOf(" ") + 1;
+                    netRecord.setStatus(response_header.substring(s,s + 3).trim());
                 } else if (data.getParams() != null && data.getParams().getNet_error() != 0) {
                     netRecord.setErrorCode(data.getParams().getNet_error());
                 }

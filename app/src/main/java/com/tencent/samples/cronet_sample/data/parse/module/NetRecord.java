@@ -7,27 +7,28 @@ public class NetRecord {
     private int key;//eventType key
     private long hostStartTime;// 这个域名起始时间
     private String url;//单个测试地址
+    private String status;
 
-    private String hostname;//
-    private String ip;
-    private String port;
+    private String hostname;//域名
+    private String ip;//ip
+    private String port;//端口
 
-    private boolean isquic = false;
-    private boolean isRedirceted = false;
+    private boolean isquic = false;//是否quic
+    private boolean isRedirceted = false;//是否重定向
 
-    private int connStart;
-    private int connEnd;
+    private int connStart;//建联起始时间
+    private int connEnd;//建联结束时间
 
-    private int requestStart;
-    private int requestEnd;
-    private int responseStart;
-    private int responseEnd;
+    private int requestStart;//请求起始时间
+    private int requestEnd;//请求起始时间
+    private int responseStart;//响应起始时间
+    private int responseEnd;//响应起始时间
 
     private List<Integer> receiveStart = new ArrayList<Integer>();
-    private List<Integer> receiveEnd = new ArrayList<Integer>();
+    private List<Integer> receiveEnd = new ArrayList<Integer>();//每个包下载结束时间
 
-    private int sslStart;
-    private int sslEnd;
+    private int sslStart;//ssl起始时间
+    private int sslEnd;//ssl请求起始时间
 
     private int receiveCount = 0;
 
@@ -43,6 +44,14 @@ public class NetRecord {
     private int dnserrorCode;
 
     private Element element;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public Element getElement() {
         return element;
