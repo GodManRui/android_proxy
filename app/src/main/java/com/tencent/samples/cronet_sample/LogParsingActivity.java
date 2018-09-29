@@ -26,8 +26,10 @@ public class LogParsingActivity extends AppCompatActivity {
         tvTiming = (TextView) findViewById(R.id.tv_timing);
 
         Timing timing = (Timing) getIntent().getSerializableExtra("list");
-        String text = "     Dom Loading : " + (timing.getDomComplete() - timing.getDomInteractive()) + "ms \n     JS CSS loading :" + (timing.getDomContentLoadedEventEnd() - timing.getDomContentLoadedEventStart())
-                + "ms  \n     白屏时间: " + (timing.getDomInteractive() - timing.getNavigationStart()) + "ms \n      onLoad执行时间:" + (timing.getLoadEventEnd() - timing.getLoadEventStart() + "ms");
+        String text = "     Dom Loading : " + (timing.getDomComplete() - timing.getDomInteractive())
+                + "ms \n     JS CSS loading :" + (timing.getDomContentLoadedEventEnd() - timing.getDomContentLoadedEventStart())
+                + "ms  \n     白屏时间: " + (timing.getDomInteractive() - timing.getNavigationStart())
+                + "ms \n      onLoad执行时间:" + (timing.getLoadEventEnd() - timing.getLoadEventStart() + "ms");
         tvTiming.setText(text);
         List<NetRecord> netList = timing.getNetList();
         DomAllLogAdapter adapter = new DomAllLogAdapter(this, netList);
