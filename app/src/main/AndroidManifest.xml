@@ -27,6 +27,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".LogParsingActivity" />
+        <activity android:name=".LogInfoActivity" />
         <!--<activity android:name=".WebViewActivity" />-->
     </application>
 

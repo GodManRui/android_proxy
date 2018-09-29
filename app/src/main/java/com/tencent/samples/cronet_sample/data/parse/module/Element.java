@@ -1,13 +1,15 @@
 package com.tencent.samples.cronet_sample.data.parse.module;
 
-public class Element {
+import java.io.Serializable;
+
+public class Element implements Serializable {
 	private int dns;//
 	private int conn;//建联时间
 	private int ssl;
-	private int request;
-	private int response;
-	private int receive;
-	private int total;
+	private int request;	//发送请求耗时   send
+	private int response;	//服务器开始响应耗时  wait
+	private int receive;	//下载耗时
+	private int total;		//子元素总耗时
 	
 	public Element(NetRecord netRecord){
 		if(netRecord.getHostStartTime() != 0 && netRecord.getDnsEnd() != 0&&netRecord.getDnsEnd() >= netRecord.getHostStartTime()){

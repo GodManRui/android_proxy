@@ -20,6 +20,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
 
+import com.tencent.samples.cronet_sample.data.Timing;
+import com.tencent.samples.cronet_sample.data.parse.QuicDataParse;
+import com.tencent.samples.cronet_sample.data.parse.module.NetRecord;
 import com.tencent.smtt.sdk.CacheManager;
 
 import org.chromium.net.CronetEngine;
@@ -28,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import static com.tencent.samples.cronet_sample.NetWork.getCronetEngine;
 
@@ -41,6 +45,8 @@ public class QuicWebViewActivity extends AppCompatActivity {
     private EditText edUrl;
     private boolean mPageFinished;
     private String mQuicLog;
+    private boolean mShouldLoad = true;
+    private String currentFile;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
 
@@ -52,6 +58,11 @@ public class QuicWebViewActivity extends AppCompatActivity {
                         wb.clearCache(true);
                         cronetEngine.stopNetLog();
                         mPageFinished = true;
+                        List<NetRecord> netRecords = QuicDataParse.parseLog(currentFile);
+                        Timing timing = new Timing();
+                        timing.setNetList(netRecords);
+                        Log.e("JerryZhu", "handleMessage: ");
+                        startLogParsingActivity(timing);
                     }
                     break;
                 case LOAD_NEW_URL:
@@ -62,14 +73,13 @@ public class QuicWebViewActivity extends AppCompatActivity {
                         wb.clearCache(true);
 //                        wb.loadUrl("about:blank");// 清空当前加载
                         File dirQuicLog = new File(mQuicLog);
-                        Utils.deleteFile(dirQuicLog);
+//                        Utils.deleteFile(dirQuicLog);
                         wb.loadUrl(wevUrl);
                     }
                     break;
             }
         }
     };
-    private boolean mShouldLoad = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -95,8 +105,8 @@ public class QuicWebViewActivity extends AppCompatActivity {
         findViewById(R.id.im_search).setOnClickListener(v -> {
             if (mShouldLoad)
                 startBrowse();
-            else
-                startLogParsingActivity();
+            /*else
+                startLogParsingActivity(netRecords);*/
         });
         //     wb = new WebView(this);
     }
@@ -124,7 +134,6 @@ public class QuicWebViewActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         wb.setWebViewClient(new MyWebClient(stringBuilder, handler));
-        wb.loadUrl("www.baidu.com");
     }
 
     private void startBrowse() {
@@ -164,17 +173,15 @@ public class QuicWebViewActivity extends AppCompatActivity {
         //     String wevUrl = "http://debugtbs.qq.com";
     }
 
-    private void startLogParsingActivity() {
-        Intent intent = new Intent(this, LogParsingActivity.class);
-        startActivity(intent);
-    }
-
     private void startNetLog() {
         File outputFile;
         try {
             mQuicLog = Environment.getExternalStorageDirectory() + "/1QUIC_LOG";
             outputFile = File.createTempFile("cronet", ".txt",
                     new File(mQuicLog));
+            boolean mkdir = outputFile.mkdir();
+            currentFile = outputFile.toString();
+            Log.e("JerryZhu", mkdir + "  startNetLog: " + currentFile);
             cronetEngine.startNetLogToFile(outputFile.toString(), false);
         } catch (IOException e) {
             e.printStackTrace();
@@ -213,6 +220,12 @@ public class QuicWebViewActivity extends AppCompatActivity {
         wb.clearCache(true);
 
         wb = null;
+    }
+
+    private void startLogParsingActivity(Timing timing) {
+        Intent intent = new Intent(this, LogParsingActivity.class);
+        intent.putExtra("list", timing);
+        startActivity(intent);
     }
 
    /* @Override

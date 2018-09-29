@@ -2,10 +2,10 @@ package com.tencent.samples.cronet_sample.data;
 
 import com.tencent.samples.cronet_sample.data.parse.module.NetRecord;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
-public class Timing {
+public class Timing implements Serializable {
 
     /**
      * navigationStart : 1535624596116      准备加载新页面
@@ -52,7 +52,7 @@ public class Timing {
     private long domComplete;
     private long loadEventStart;
     private long loadEventEnd;
-    List<NetRecord> netList = new ArrayList<NetRecord>();
+    private List<NetRecord> netList;
 
     public List<NetRecord> getNetList() {
         return netList;

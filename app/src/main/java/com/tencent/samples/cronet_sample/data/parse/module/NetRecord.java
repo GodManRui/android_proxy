@@ -1,12 +1,13 @@
 package com.tencent.samples.cronet_sample.data.parse.module;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NetRecord {
+public class NetRecord implements Serializable {
     private int key;//eventType key
     private long hostStartTime;// 这个域名起始时间
-    private String url;//单个测试地址
+    private String url;//单个测试地址                     ****
     private String status;
 
     private String hostname;//域名
