@@ -20,6 +20,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
 
+import com.nc.gson.Gson;
 import com.tencent.samples.cronet_sample.data.Timing;
 import com.tencent.samples.cronet_sample.data.parse.QuicDataParse;
 import com.tencent.samples.cronet_sample.data.parse.module.NetRecord;
@@ -47,6 +48,8 @@ public class QuicWebViewActivity extends AppCompatActivity {
     private String mQuicLog;
     private boolean mShouldLoad = true;
     private String currentFile;
+    private Timing timing;
+    private MyWebClient myWebClient;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
 
@@ -58,11 +61,19 @@ public class QuicWebViewActivity extends AppCompatActivity {
                         wb.clearCache(true);
                         cronetEngine.stopNetLog();
                         mPageFinished = true;
-                        List<NetRecord> netRecords = QuicDataParse.parseLog(currentFile);
-                        Timing timing = new Timing();
-                        timing.setNetList(netRecords);
-                        Log.e("JerryZhu", "handleMessage: ");
-                        startLogParsingActivity(timing);
+                        wb.evaluateJavascript("javascript:  JSON.stringify(performance.timing);", value -> {
+                            /* view.evaluateJavascript("javascript: " + stringBuilder, value -> {*/
+                            Gson gson = new Gson();
+                            value = value.replaceAll("\\\\", "").replaceFirst("\"", "");
+                            value = value.substring(0, value.length() - 1);
+                            Log.e("JerryZhu", "  onPage js执行结果: 格式化 " + value);
+                            timing = (Timing) gson.fromJson(value, Timing.class);
+
+                            if (timing == null) timing = new Timing();
+                            List<NetRecord> netRecords = QuicDataParse.parseLog(currentFile);
+                            timing.setNetList(netRecords);
+                            startLogParsingActivity(timing);
+                        });
                     }
                     break;
                 case LOAD_NEW_URL:
@@ -133,7 +144,8 @@ public class QuicWebViewActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        wb.setWebViewClient(new MyWebClient(stringBuilder, handler));
+        myWebClient = new MyWebClient(stringBuilder, handler);
+        wb.setWebViewClient(myWebClient);
     }
 
     private void startBrowse() {
@@ -161,7 +173,7 @@ public class QuicWebViewActivity extends AppCompatActivity {
         Message message = handler.obtainMessage();
         message.what = LOAD_NEW_URL;
         handler.sendMessage(message);
-        mShouldLoad = false;
+//        mShouldLoad = false;
         // String wevUrl = "https://translate.google.cn/";
         //    String wevUrl = "https://www.wolfcstech.com/";
         //   String wevUrl = "https://www.baidu.com/";

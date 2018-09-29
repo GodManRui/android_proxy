@@ -44,10 +44,6 @@ public class MyWebClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
 //         wb.evaluateJavascript("javascript:  function getTiming(){return JSON.stringify(performance.timing);}; getTiming();", value -> {
-        view.evaluateJavascript("javascript:  JSON.stringify(performance.timing);", value -> {
-            /* view.evaluateJavascript("javascript: " + stringBuilder, value -> {*/
-            Log.e("JerryZhu", url + "  onPage js执行结果:  " + value);
-        });
         Message message = handler.obtainMessage();
         message.what = PAGE_LOAD_FINISH;
         handler.sendMessageDelayed(message, 5000);
