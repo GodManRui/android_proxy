@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tencent.samples.cronet_sample">
+    package="com.bonree.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" />
 
     <application
-        android:name=".MyApplication"
+        android:name="com.bonree.android.MyApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,15 +19,15 @@
         android:supportsRtl="true"
         android:theme="@style/CronetSample">
         <activity
-            android:name=".QuicWebViewActivity"
+            android:name="com.bonree.android.QuicWebViewActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LogParsingActivity" />
-        <activity android:name=".LogInfoActivity" />
+        <activity android:name="com.bonree.android.LogParsingActivity" />
+        <activity android:name="com.bonree.android.LogInfoActivity" />
         <!--<activity android:name=".WebViewActivity" />-->
     </application>
 
