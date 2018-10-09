@@ -9,7 +9,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.4'
+        classpath 'com.android.tools.build:gradle:3.2.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
         classpath "io.realm:realm-gradle-plugin:5.4.1"
         classpath 'com.nc.agent.android:nc:4.2.0.0'

@@ -1,0 +1,1 @@
+[info] 2018/09/28 18:20:29 TDSDK v4.2.0.0 integration success.
