@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
@@ -50,6 +51,7 @@ public class QuicWebViewActivity extends AppCompatActivity {
     private String currentFile;
     private Timing timing;
     private MyWebClient myWebClient;
+    private File outputFile;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
 
@@ -59,8 +61,9 @@ public class QuicWebViewActivity extends AppCompatActivity {
                 case PAGE_LOAD_FINISH:
                     if (!mPageFinished) {
                         wb.clearCache(true);
+                        handler.removeMessages(PAGE_LOAD_FINISH);
                         cronetEngine.stopNetLog();
-                        mPageFinished = true;
+//                        mPageFinished = true;
                         wb.evaluateJavascript("javascript:  JSON.stringify(performance.timing);", value -> {
                             /* view.evaluateJavascript("javascript: " + stringBuilder, value -> {*/
                             Gson gson = new Gson();
@@ -83,9 +86,13 @@ public class QuicWebViewActivity extends AppCompatActivity {
                         wb.clearFormData();
                         wb.clearCache(true);
 //                        wb.loadUrl("about:blank");// 清空当前加载
-                        File dirQuicLog = new File(mQuicLog);
-//                        Utils.deleteFile(dirQuicLog);
+//                        Utils.deleteFile(outputFile);
+
                         wb.loadUrl(wevUrl);
+
+                        Message message = handler.obtainMessage();
+                        message.what = PAGE_LOAD_FINISH;
+                        handler.sendMessageDelayed(message, 30000);
                     }
                     break;
             }
@@ -146,6 +153,14 @@ public class QuicWebViewActivity extends AppCompatActivity {
         }
         myWebClient = new MyWebClient(stringBuilder, handler);
         wb.setWebViewClient(myWebClient);
+        wb.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                Log.e("JerryZhu", "进度: " + newProgress);
+            }
+        });
     }
 
     private void startBrowse() {
@@ -186,12 +201,12 @@ public class QuicWebViewActivity extends AppCompatActivity {
     }
 
     private void startNetLog() {
-        File outputFile;
         try {
             mQuicLog = Environment.getExternalStorageDirectory() + "/1QUIC_LOG";
+            File directory = new File(mQuicLog);
+            boolean mkdir = directory.mkdir();
             outputFile = File.createTempFile("cronet", ".txt",
-                    new File(mQuicLog));
-            boolean mkdir = outputFile.mkdir();
+                    directory);
             currentFile = outputFile.toString();
             Log.e("JerryZhu", mkdir + "  startNetLog: " + currentFile);
             cronetEngine.startNetLogToFile(outputFile.toString(), false);

@@ -29,7 +29,7 @@ public class NetWork {
                 .addQuicHint("wy.tytools.cn", 443, 443)
                 .addQuicHint("translate.google.cn", 443, 443)
                 .addQuicHint("halfrost.com", 443, 443)
-//                    .enableHttp2(true)
+                .enableHttp2(true)
                 .enableQuic(true)
                 .build();
         return cronetEngine;

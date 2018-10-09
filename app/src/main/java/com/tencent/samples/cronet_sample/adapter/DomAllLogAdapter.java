@@ -48,6 +48,9 @@ public class DomAllLogAdapter extends BaseAdapter {
         int receiveCount = netRecord.getReceiveCount();
         int conn = netRecord.getElement().getTotal();
         tvPreview.setText("Status:" + 200 + "   Received:" + receiveCount + "bytes   Cost:" + conn);
+        if (netRecord.isIsquic()) {
+            convertView.findViewById(R.id.tv_isquic).setVisibility(View.VISIBLE);
+        }
         return convertView;
     }
 }
